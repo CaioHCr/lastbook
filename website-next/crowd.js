@@ -578,7 +578,7 @@
     var hero = document.getElementById("hero"), r = hero.getBoundingClientRect(), wm = document.querySelector(".wm-svg").getBoundingClientRect(),
       c = document.getElementById("centre").getBoundingClientRect(), bar = document.querySelector(".bar").getBoundingClientRect();
     var W = r.width, H = r.height, phone = W < 760, rs = [], tx = [];
-    [].forEach.call(document.querySelectorAll("#centre .wm-svg,#centre .lead,#centre .phone-note,#centre .dl-item,#centre .then,#centre .hero-community,.hero-foot p,.bar-in>*"), function (el) {
+    [].forEach.call(document.querySelectorAll("#centre .wm-svg,#centre .lead,#centre .phone-note,#centre .dl-item,#centre .then,#centre .hero-community,#centre .launch-headline,#centre .launch-description,#centre .launch-path,.hero-foot p,.bar-in>*"), function (el) {
       var q = el.getBoundingClientRect(); if (!q.width) return;
       var b = [q.left - r.left - 16, q.top - r.top - 16, q.right - r.left + 16, q.bottom - r.top + 10];
       rs.push(b); if (!el.classList.contains("wm-svg")) tx.push(b);
