@@ -384,9 +384,9 @@
   function disasterSky(p, W, H, G, now, still) {
     if (!G || W < 760) return;
     var top = G.top + 18;
-    var floor = Math.min(H * .29, G.y + 65);
+    // Keep room for the skyline when the hero uses a compact layout.
+    var floor = Math.max(top + 100, Math.min(H * .29, G.y + 65));
     var height = floor - top;
-    if (height < 100) return;
     var t = still ? 12 : (now / 1000) % 26;
     var meteorPaths = [[.43,.23],[.57,.81],[.04,.29],[.96,.67],[.31,.12]];
     var path = meteorPaths[still ? 0 : Math.floor(now / 26000) % meteorPaths.length];
