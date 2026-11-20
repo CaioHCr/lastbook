@@ -45,10 +45,15 @@
 .launch-paths {
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 14px;
   margin-top: 27px;
   text-align: left;
+}
+
+.launch-downloads {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .launch-path {
@@ -56,13 +61,28 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 102px;
-  padding: 15px 16px 15px 19px;
+  min-height: 64px;
+  padding: 10px 16px 10px 19px;
   background: #fffdfa;
   border: 2px solid var(--ink);
   border-radius: var(--r-note);
   box-shadow: 3px 4px 0 var(--ink);
   transition: transform .15s, box-shadow .15s;
+}
+
+.launch-download {
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding-inline: 8px;
+  font: 900 1rem/1.2 var(--body);
+  text-align: center;
+}
+
+.launch-download svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
 }
 
 .launch-path-community {
@@ -100,11 +120,6 @@
   border-radius: 50% 45% 48% 44%;
   font-size: 1.25rem;
   line-height: 1;
-}
-
-.launch-path-download .path-arrow {
-  color: #fffdfa;
-  background: var(--ink);
 }
 
 .community-stories.sec {
@@ -476,12 +491,15 @@
 
   .launch-paths {
     width: min(100%, 410px);
-    grid-template-columns: 1fr;
     gap: 12px;
     margin-top: 21px;
   }
 
-  .launch-path {
+  .download-prefix {
+    display: none;
+  }
+
+  .launch-path-community {
     min-height: 69px;
     padding: 10px 12px 10px 14px;
   }
@@ -511,6 +529,14 @@
 }
 
 @media (max-width: 520px) {
+  .launch-download {
+    flex-direction: column;
+    gap: 4px;
+    min-height: 62px;
+    padding: 7px 4px;
+    font-size: .9375rem;
+  }
+
   .community-nav .github-nav {
     display: none;
   }
@@ -530,6 +556,12 @@
 
   .headline-break {
     display: none;
+  }
+}
+
+@media (max-width: 350px) {
+  .community-home .hero {
+    padding-top: 102px;
   }
 }
 

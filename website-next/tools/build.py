@@ -305,10 +305,11 @@ def home():
     <p class="launch-headline">Everything you need to survive<br class="headline-break"> and rebuild society. <span class="launch-byline">Built by the users.</span></p>
     <p class="launch-description">Free, local, offline and private.</p>
     <div class="launch-paths">
-      <a class="launch-path launch-path-download" href="/download/">
-        <span class="path-copy"><strong>Download Lastbook</strong><span>For Mac, Windows and Linux.</span></span>
-        <span class="path-arrow" aria-hidden="true">↓</span>
-      </a>
+      <div class="launch-downloads" role="group" aria-label="Download Lastbook">
+        <a class="launch-path launch-download" href="{MAC}" aria-label="Download for Mac">{APPLE}<span><span class="download-prefix">Download for </span>Mac</span></a>
+        <a class="launch-path launch-download" href="{WIN}" aria-label="Download for Windows">{WINDOWS}<span><span class="download-prefix">Download for </span>Windows</span></a>
+        <a class="launch-path launch-download" href="{LINUX}" aria-label="Download for Linux">{BOX}<span><span class="download-prefix">Download for </span>Linux</span></a>
+      </div>
       <a class="launch-path launch-path-community" href="/community/">
         <span class="path-copy"><strong>Help build Lastbook</strong><span>We're building Lastbook together. We need you.</span></span>
         <span class="path-arrow" aria-hidden="true">→</span>
