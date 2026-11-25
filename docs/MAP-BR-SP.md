@@ -250,3 +250,79 @@ licence is not settled for any layer in this build.
 - Not checked: the Paraná side of the box; the IBGE licence; the census file; the OpenStreetMap address counts against
   a second source; whether the public buildings' addresses are the official ones (the statements above are general
   knowledge); the packaged desktop app, Windows and macOS, and installing through setup.
+
+## The address index from the census (CNEFE 2022)
+
+The address index for `BR-SP` can come from the IBGE census address register (CNEFE, Censo Demográfico 2022), instead of
+OpenStreetMap. `tools/build_addresses_cnefe.py` builds it from IBGE's state file `35_SP.zip`
+(Arquivos_CNEFE/CSV/UF, 1,082,015,432 bytes). It is written to `derived/geo/addresses/BR-SP.sqlite`, in the format of
+#31, with `state = BR-SP` in every row and `meta.region = BR-SP`, `meta.norm = pt-1`. It replaces the OpenStreetMap index
+in the same path: both cannot sit in one folder.
+
+**Legal basis, as the maintainers were given it.** The data is public federal data. The credit to IBGE is required,
+under Decreto 8.777/2016, art. 4 (open data of the federal executive, free use with citation of the source). The decree
+text was not re-read in this build (the Planalto site did not answer). No explicit licence was found on the CNEFE page,
+in IBGE's Nota Técnica 01/2024, in IBGE's terms of use or on dados.gov.br. The IBGE note says IBGE brought the CNEFE
+release forward because of the floods in Rio Grande do Sul in May 2024, to support emergency response.
+
+| | |
+|---|---|
+| Source | `35_SP.zip`, 1,082,015,432 bytes, Last-Modified 20 May 2024 |
+| Rows read | 22,953,725 (one per species at an address) |
+| Distinct addresses | 22,647,398 |
+| Duplicate rows skipped | 306,327 |
+| Left out: `SN` (no number) | 1,651,253 |
+| Left out: coordinate level 4, 5 or 6 (face of block, locality, census tract) | 109,508 |
+| **Addresses written** | **20,886,637** |
+| File | 2,869,927,936 bytes (2.87 GB), about 137 bytes per address |
+| Build time | 821 s (13.7 min), on the same Windows machine |
+| Peak memory | 1.94 GB |
+
+Coordinate levels in the file: 1 original census point 20,317,716; 2 point moved for apartments at one number
+2,272,608; 3 estimated point 253,221; 4 face of block 107,395; 5 locality 687; 6 census tract 2,098. Levels 1 to 3 are
+kept.
+
+What the rows look like: every row has a postcode (8 digits), a street type (`RUA`, `AVENIDA`, `ESTRADA`, ...), and
+municipality codes for all 645 municipalities. The street names have no accents and are in capitals.
+
+### Queries against this index
+
+Run on the main engine, with real rows and typed variants. "Match" means the lookup returns the address.
+
+| Query | Match | Note |
+|---|---|---|
+| `41 Rua Salvador Filardi` | yes (4 rows, several cities) | the same name exists in several municipalities |
+| `41 RUA SALVADOR FILARDI` | yes | case does not matter |
+| `41 Salvador Filardi` | no | the street type is part of the stored name |
+| `Rua Salvador Filardi, 41` | no | not an address query: the number must come first |
+| `41 R. Salvador Filardi` | no | 6.6 s, see below |
+| `1215 Avenida Doutor Frederico Martins Da Costa Carvalho` | yes | |
+| `1215 Av. Doutor Frederico Martins Da Costa Carvalho` | no | `av` is not mapped to `avenida` for Portuguese |
+| `1578 Avenida Paulista` | yes | |
+| `1578 Av. Paulista` | no | as above |
+| `1578 Avenida Paulísta` | no | an accent in the query never matches |
+| `4500 Avenida Morumbi` | yes | CEP 04703-002 in the record |
+| `4500 Av. Morumbi`, `4500 Morumbi`, `Avenida Morumbi, 4500` | no | |
+| `4500 Avenida Morumbi, São Paulo` | yes | the city after the street is read |
+| `15 Viaduto do Chá` | no | not in this index |
+| `SN Rua ...`, `0 Rua ...` | no | `SN` rows are not in the index; `0` finds nothing here |
+| `01311-000`, `01311000` | no | a postcode alone goes to the place finder, not the address lookup |
+
+Most lookups take 3 to 15 ms. The slow cases are short street prefixes: `41 R. Salvador Filardi` took 6.6 s, because the
+prefix `r` matches a large part of the index. `0 Rua Pedro Alvares Cabral` took 4.2 s.
+
+The public example, `4500 Avenida Morumbi`, is a number in the census register. Whether it is the state government
+palace (Palácio dos Bandeirantes) is general knowledge and was not checked: the postcode in the census (04703-002)
+differs from the one the OpenStreetMap index gave for the same street number (05650-905).
+
+### What the search engine on `main` would need (for #386 and #31)
+
+These are not changed in this step; the list is for the shared runtime work.
+
+1. Match without the street type, or add the bare name as an alias in the index.
+2. Map Portuguese abbreviations on both sides: `Av`, `Av.` to `avenida`; `Dr.`, `R.` to `rua`.
+3. Fold accents on both the query and the stored name. Today `normalize()` turns an accent into a space, so a typed accent never matches.
+4. Refuse or bound very short street prefixes: one-letter prefixes scan most of a large index (6.6 s here).
+5. The `SN` rows (1,651,253) need a "no number" result type. The lookup must never present them as a house number.
+6. The result's source is written as "Overture Maps" for every index. It should read `meta.source` of the index.
+7. Read `meta.norm` to choose the rule for each index (#79, #386), instead of the one shared `normalize()`.
