@@ -156,6 +156,9 @@ alternative.
 [MAP-BO-L.md](MAP-BO-L.md) describes a first build from the Bolivia proposal: a detailed map of La Paz department,
 cut by its COD-AB box from Geofabrik's Bolivia extract. It depends on the prototype region map builder from the
 still-open pull request #80, at commit `a453274`; that builder is not in the main branch.
+[MAP-BR-SP.md](MAP-BR-SP.md) describes a build of São Paulo state (`BR-SP`) with the same builder at the same commit, from
+Geofabrik's Southeast Brazil extract. It records a border test that fails: the place finder labels every place with the
+state's name, including places in Minas Gerais and Rio de Janeiro.
 
 [MAP-DE-BE.md](MAP-DE-BE.md) builds one of the German states, Berlin, as an offline map set with an address index
 (`tools/build_region_de_be.py`); searching that index the German way is runtime work in #79.
