@@ -210,10 +210,35 @@ What the CNEFE index answers (run on the main engine with real rows):
 `addr:housenumber` and `addr:street` tags inside the state's OpenStreetMap boundary. It has the example below, which the
 CNEFE index does not.
 
-Public example (for the OpenStreetMap alternative): `15 Viaduto do Chá` finds Viaduto do Chá, 15, São Paulo, 01002-020.
-This is the address of the São Paulo city hall (general knowledge; not checked against an official source here). The
-CNEFE index does not contain this address (it has no "Viaduto do Chá" at all), so the example works only with the
-OpenStreetMap index.
+**Public example, CNEFE index (main proposal).** The Hemocentro de São Paulo (Fundação Pró-Sangue) at Avenida Doutor
+Enéas Carvalho de Aguiar, 155, is a state-owned unit in the building of the Hospital das Clínicas da FMUSP.
+
+- The address is in the CNEFE index as `155 AVENIDA DOUTOR ENEAS CARVALHO DE AGUIAR`, CEP 05403-000, latitude
+  -23.55732, longitude -46.668708.
+- The official source opened: the São Paulo State Health Secretariat page for the Fundação Pró-Sangue,
+  <https://www.saude.sp.gov.br/ses/institucional/fundacoes/fundacao-pro-sangue-hemocentro-de-sao-paulo>. Quote: "Criada
+  em 1984, a Fundação Pró-Sangue tem sua sede no 1.º andar do Prédio dos Ambulatórios do Hospital das Clínicas, na
+  avenida Dr. Enéas Carvalho de Aguiar, 155." The page gives no postcode.
+- The postcode 05403-000 and the coordinates come from the Ministry's national CNES file, record CO_CNES 2088789 (`AV DR
+  ENEAS CARVALHO DE AGUIAR`, number 155, CEP 05403000, latitude -23.5571054705, longitude -46.6683410547, administrative
+  sphere ESTADUAL). The CNES file is the Ministry's open data, downloaded from
+  `https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/CNES/cnes_estabelecimentos_csv.zip` (56,958,207 bytes, SHA-256
+  `b72441b75e5707aa016f4538ebbe89894a7dadee2751d1e46bf3d808a15de6ef`).
+- **Distance between the two coordinates: 44 m** (CNEFE to CNES, same number and street), below the 100 m reference.
+- The engine, main branch, on this index: `155 Avenida Doutor Eneas Carvalho De Aguiar` returns
+  `155 AVENIDA DOUTOR ENEAS CARVALHO DE AGUIAR`, detail `São Paulo, BR-SP, 05403-000`, at -23.55732, -46.668708. The
+  official spelling `155 Avenida Doutor Enéas Carvalho de Aguiar` returns nothing (the accent and the `Dr.` abbreviation
+  do not match), and neither does `155 Av. Dr. Enéas Carvalho de Aguiar`. The query has to use the record's spelling.
+
+Rejected candidates, for the record: Hospital das Clínicas itself at Enéas 255 (official page
+<https://www.hc.fm.usp.br/hc/contato>, CEP 05403-000). The CNEFE point for 255 is about 230 m from the CNES coordinates
+of two units at the same number, so it was not used as the example. The Legislative Assembly (Av. Pedro Álvares Cabral,
+201) is on the official site with CEP 04097-900, which is not in the CNEFE index, so it was not used either.
+
+**Alternative example, OpenStreetMap index.** `15 Viaduto do Chá` finds Viaduto do Chá, 15, São Paulo, 01002-020. This
+is the address of the São Paulo city hall (general knowledge; not checked against an official source here). The CNEFE
+index does not contain this address (it has no "Viaduto do Chá" at all), so the example works only with the OpenStreetMap
+index.
 
 ## What is and is not in it
 
@@ -262,5 +287,7 @@ address source, above) has its own licence status, described there.
   border test for all ten places in the table.
 - Checked against main: the `BR-SP` box in REGIONS-BR.md; pull request #469 (open); pull request #80 (open, head
   `de997abc`).
-- Not checked: the IBGE licence; the census file's licence and the decree text; whether the public address is the official
-  one; the packaged desktop app, Windows and macOS, and installing through setup.
+- Not checked: the IBGE licence; the census file's licence and the decree text; the Hemocentro's postcode on an official
+  page (05403-000 comes from the CNES file; the state page gives no postcode and the FMUSP hematology page did not open);
+  whether the Viaduto do Chá address is the city hall's; the packaged desktop app, Windows and macOS, and installing
+  through setup.
